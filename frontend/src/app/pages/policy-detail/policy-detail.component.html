@@ -1,0 +1,223 @@
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-20">
+      <div class="inline-flex items-center px-8 py-4 font-semibold leading-6 text-sm shadow-xl rounded-2xl text-white bg-gradient-to-r from-blue-600 to-purple-600">
+        <svg class="animate-spin -ml-1 mr-3 h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Loading policy details...
+      </div>
+    </div>
+
+    <!-- Policy Details -->
+    <div *ngIf="!isLoading && policy" class="max-w-4xl mx-auto">
+      <!-- Back Button -->
+      <button (click)="router.navigate(['/policies'])" 
+              class="flex items-center text-gray-600 hover:text-blue-600 mb-8 transition-all duration-300 group bg-white/80 backdrop-blur-sm px-6 py-3 rounded-2xl shadow-lg hover:shadow-xl border border-white/20">
+        <svg class="w-5 h-5 mr-3 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="font-semibold">Back to Policies</span>
+      </button>
+
+      <!-- Policy Header -->
+      <div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-10 mb-10 border border-white/20">
+        <div class="flex flex-col lg:flex-row gap-8">
+          <!-- Policy Image -->
+          <div class="lg:w-1/3">
+            <div class="w-full h-80 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center overflow-hidden shadow-lg">
+              <div *ngIf="policy.imageUrl; else placeholderImage" class="w-full h-full">
+                <img [src]="policy.imageUrl" [alt]="policy.title" 
+                     class="w-full h-full object-cover rounded-2xl">
+              </div>
+              <ng-template #placeholderImage>
+                <div class="text-center">
+                  <div class="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center text-5xl mx-auto mb-6 shadow-lg">
+                    {{ getCategoryIcon(policy.category) }}
+                  </div>
+                  <p class="text-gray-600 font-semibold">Policy Image</p>
+                  <p class="text-sm text-gray-400 mt-2">High-quality visual representation</p>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+
+          <!-- Policy Info -->
+          <div class="lg:w-2/3">
+            <div class="mb-6">
+              <div class="flex items-center space-x-4 mb-4">
+                <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg">
+                  {{ policy.category | titlecase }}
+                </span>
+                <span class="text-sm text-gray-500 font-mono bg-gray-100 px-3 py-1 rounded-lg">{{ policy.code }}</span>
+              </div>
+              <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ policy.title }}</h1>
+              <p class="text-xl text-gray-600 leading-relaxed">{{ policy.description }}</p>
+            </div>
+
+            <!-- Pricing -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div class="text-center p-8 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border-2 border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div class="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                  </svg>
+                </div>
+                <p class="text-sm text-blue-600 mb-3 font-bold">Monthly Premium</p>
+                <p class="text-4xl font-bold text-blue-900">{{ formatCurrency(policy.premium) }}</p>
+              </div>
+              <div class="text-center p-8 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border-2 border-green-200 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div class="w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <p class="text-sm text-green-600 mb-3 font-bold">Term</p>
+                <p class="text-4xl font-bold text-green-900">{{ policy.termMonths }} months</p>
+              </div>
+              <div class="text-center p-8 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border-2 border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div class="w-16 h-16 bg-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                  </svg>
+                </div>
+                <p class="text-sm text-purple-600 mb-3 font-bold">Min. Coverage</p>
+                <p class="text-4xl font-bold text-purple-900">{{ formatCurrency(policy.minSumInsured) }}</p>
+              </div>
+            </div>
+
+            <!-- Purchase Button -->
+            <button (click)="onPurchaseClick()" 
+                    class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-5 px-8 rounded-2xl text-xl font-bold transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl">
+              <span class="flex items-center justify-center">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"></path>
+                </svg>
+                Purchase Policy
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Policy Features -->
+      <div *ngIf="policy.features && policy.features.length > 0" class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-10 mb-10 border border-white/20">
+        <div class="text-center mb-10">
+          <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl mb-6 shadow-lg">
+            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+            </svg>
+          </div>
+          <h2 class="text-3xl font-bold text-gray-900 mb-4">Key Features</h2>
+          <p class="text-xl text-gray-600">Everything you need for complete protection</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div *ngFor="let feature of policy.features" 
+               class="flex items-center p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border-2 border-green-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mr-4 flex-shrink-0 shadow-lg">
+              <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <span class="text-lg text-gray-800 font-bold">{{ feature }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Purchase Form Modal -->
+      <div *ngIf="showPurchaseForm" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white/95 backdrop-blur-sm rounded-3xl max-w-lg w-full p-10 shadow-2xl border border-white/20">
+          <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl mb-6 shadow-lg">
+              <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"></path>
+              </svg>
+            </div>
+            <h3 class="text-3xl font-bold text-gray-900 mb-3">Purchase Policy</h3>
+            <p class="text-xl text-gray-600">Complete your policy purchase</p>
+            <button (click)="showPurchaseForm = false" 
+                    class="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+          
+          <form (ngSubmit)="onPurchaseSubmit()" class="space-y-8">
+            <div>
+              <label class="block text-lg font-bold text-gray-700 mb-3">Start Date</label>
+              <input type="date" [(ngModel)]="purchaseForm.startDate" name="startDate" required
+                     class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 bg-white/50 text-lg">
+            </div>
+
+            <div>
+              <label class="block text-lg font-bold text-gray-700 mb-3">Term (months)</label>
+              <select [(ngModel)]="purchaseForm.termMonths" name="termMonths" required
+                      class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 bg-white/50 text-lg">
+                <option value="12">12 months</option>
+                <option value="24">24 months</option>
+                <option value="36">36 months</option>
+                <option value="60">60 months</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-lg font-bold text-gray-700 mb-3">Nominee Name</label>
+              <input type="text" [(ngModel)]="purchaseForm.nominee.name" name="nomineeName" required
+                     placeholder="Enter nominee's full name"
+                     class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 bg-white/50 text-lg">
+            </div>
+
+            <div>
+              <label class="block text-lg font-bold text-gray-700 mb-3">Nominee Relation</label>
+              <select [(ngModel)]="purchaseForm.nominee.relation" name="nomineeRelation" required
+                      class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 bg-white/50 text-lg">
+                <option value="">Select relation</option>
+                <option value="spouse">Spouse</option>
+                <option value="child">Child</option>
+                <option value="parent">Parent</option>
+                <option value="sibling">Sibling</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div *ngIf="errorMessage" class="bg-red-50 border-2 border-red-200 text-red-700 px-6 py-4 rounded-2xl text-lg font-medium">
+              {{ errorMessage }}
+            </div>
+
+            <div class="flex space-x-6 pt-6">
+              <button type="button" (click)="showPurchaseForm = false"
+                      class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-4 px-8 rounded-2xl font-bold transition-all duration-300 text-lg">
+                Cancel
+              </button>
+              <button type="submit" [disabled]="isPurchasing"
+                      class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 px-8 rounded-2xl font-bold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:transform-none text-lg">
+                {{ isPurchasing ? 'Processing...' : 'Purchase Policy' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Policy Not Found -->
+    <div *ngIf="!isLoading && !policy" class="text-center py-20">
+      <div class="w-40 h-40 bg-gradient-to-br from-red-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl">
+        <svg class="w-20 h-20 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+      </div>
+      <h3 class="text-4xl font-bold text-gray-900 mb-6">Policy Not Found</h3>
+      <p class="text-xl text-gray-600 mb-10 max-w-lg mx-auto leading-relaxed">The policy you're looking for doesn't exist or has been removed. Please check the policy ID and try again.</p>
+      <a routerLink="/policies" 
+         class="inline-flex items-center px-10 py-5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl text-lg">
+        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.57M15 6.75a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+        Browse All Policies
+      </a>
+    </div>
+  </div>
+</div>

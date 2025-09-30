@@ -1,0 +1,67 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Payments</h1>
+    
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-12">
+      <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-white bg-primary-500">
+        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Loading payments...
+      </div>
+    </div>
+
+    <!-- Payments List -->
+    <div *ngIf="!isLoading" class="space-y-6">
+      <div *ngFor="let payment of payments" class="insurance-card p-6">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+          <div class="flex-1">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-xl font-semibold text-gray-900">{{ payment.userPolicy?.policyProduct?.title || 'Payment' }}</h3>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ getStatusColor(payment.status) }}">
+                {{ payment.status }}
+              </span>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+              <div>
+                <p class="text-gray-500">Amount</p>
+                <p class="font-medium">{{ formatCurrency(payment.amount) }}</p>
+              </div>
+              <div>
+                <p class="text-gray-500">Method</p>
+                <p class="font-medium">{{ payment.method }}</p>
+              </div>
+              <div>
+                <p class="text-gray-500">Date</p>
+                <p class="font-medium">{{ formatDate(payment.createdAt) }}</p>
+              </div>
+              <div>
+                <p class="text-gray-500">Reference</p>
+                <p class="font-medium font-mono">{{ payment.reference }}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-4 lg:mt-0 lg:ml-6 flex space-x-2">
+            <button class="btn-secondary text-sm">View Receipt</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Payments -->
+      <div *ngIf="payments.length === 0" class="text-center py-12">
+        <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No payments found</h3>
+        <p class="text-gray-600 mb-4">You haven't made any payments yet.</p>
+        <a routerLink="/policies" class="btn-primary">Browse Policies</a>
+      </div>
+    </div>
+  </div>
+</div>

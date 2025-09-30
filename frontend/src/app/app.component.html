@@ -1,0 +1,129 @@
+<div class="min-h-screen">
+  <!-- Navigation Header -->
+  <nav class="glass sticky top-0 z-50 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20">
+        <!-- Logo -->
+        <div class="flex items-center">
+          <a routerLink="/home" class="flex items-center space-x-4 group">
+            <div class="w-14 h-14 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 glow-blue shadow-lg">
+              <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="text-3xl font-black text-gradient group-hover:scale-105 transition-transform duration-300">TrustUs</span>
+          </a>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-baseline space-x-1">
+            <a routerLink="/home" routerLinkActive="text-indigo-600" 
+               class="text-white/90 hover:text-white px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:bg-white/10 backdrop-blur-sm">
+              Home
+            </a>
+            <a routerLink="/policies" routerLinkActive="text-indigo-600"
+               class="text-white/90 hover:text-white px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:bg-white/10 backdrop-blur-sm">
+              Policies
+            </a>
+            
+            <!-- Authenticated User Links -->
+            <ng-container *ngIf="authService.isAuthenticated()">
+              <!-- Admin Links -->
+              <ng-container *ngIf="currentUser?.role === 'admin'">
+                <a routerLink="/admin-dashboard" routerLinkActive="text-indigo-600"
+                   class="text-white/90 hover:text-white px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:bg-white/10 backdrop-blur-sm">
+                  Admin Dashboard
+                </a>
+                <a routerLink="/admin/users" routerLinkActive="text-indigo-600"
+                   class="text-white/90 hover:text-white px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:bg-white/10 backdrop-blur-sm">
+                  Users
+                </a>
+                <a routerLink="/admin/audit" routerLinkActive="text-indigo-600"
+                   class="text-white/90 hover:text-white px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:bg-white/10 backdrop-blur-sm">
+                  Audit Logs
+                </a>
+              </ng-container>
+              
+              <!-- Agent Links -->
+              <ng-container *ngIf="currentUser?.role === 'agent'">
+                <a routerLink="/agent-dashboard" routerLinkActive="text-indigo-600"
+                   class="text-white/90 hover:text-white px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:bg-white/10 backdrop-blur-sm">
+                  Agent Dashboard
+                </a>
+              </ng-container>
+              
+              <!-- Customer Links -->
+              <ng-container *ngIf="currentUser?.role === 'customer'">
+                <a routerLink="/dashboard" routerLinkActive="text-indigo-600"
+                   class="text-white/90 hover:text-white px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:bg-white/10 backdrop-blur-sm">
+                  Dashboard
+                </a>
+                <a routerLink="/my-policies" routerLinkActive="text-indigo-600"
+                   class="text-white/90 hover:text-white px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:bg-white/10 backdrop-blur-sm">
+                  My Policies
+                </a>
+                <a routerLink="/claims" routerLinkActive="text-indigo-600"
+                   class="text-white/90 hover:text-white px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:bg-white/10 backdrop-blur-sm">
+                  Claims
+                </a>
+                <a routerLink="/payments" routerLinkActive="text-indigo-600"
+                   class="text-white/90 hover:text-white px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:bg-white/10 backdrop-blur-sm">
+                  Payments
+                </a>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+
+        <!-- User Menu -->
+        <div class="flex items-center space-x-4">
+          <ng-container *ngIf="!authService.isAuthenticated()">
+            <a routerLink="/login" 
+               class="text-white/90 hover:text-white px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:bg-white/10 backdrop-blur-sm">
+              Login
+            </a>
+            <a routerLink="/register" 
+               class="btn-primary text-sm px-6 py-3 rounded-xl font-bold">
+              Register
+            </a>
+          </ng-container>
+
+          <ng-container *ngIf="authService.isAuthenticated()">
+            <div class="flex items-center space-x-4 glass-dark px-6 py-3 rounded-2xl">
+                <img *ngIf="currentUser?.profilePhoto" 
+                     [src]="currentUser?.profilePhoto" 
+                     [alt]="currentUser?.name"
+                     class="w-12 h-12 rounded-full object-cover border-2 border-white/20">
+              <div *ngIf="!currentUser?.profilePhoto" 
+                   class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center border-2 border-white/20">
+                <span class="text-white font-bold text-lg">
+                  {{ currentUser?.name?.charAt(0)?.toUpperCase() }}
+                </span>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-white font-bold text-sm">{{ currentUser?.name }}</span>
+                <span class="text-xs text-white/70 capitalize">{{ currentUser?.role }}</span>
+              </div>
+              <!-- Debug button - remove in production -->
+              <button (click)="refreshAuthState()" 
+                      class="text-yellow-400 hover:text-yellow-300 px-2 py-1 rounded text-xs font-bold transition-colors hover:bg-yellow-500/20">
+                Refresh
+              </button>
+              <button (click)="logout()" 
+                      class="text-white/70 hover:text-red-400 px-4 py-2 rounded-lg text-sm font-bold transition-colors hover:bg-red-500/20">
+                Logout
+              </button>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-1">
+    <router-outlet></router-outlet>
+  </main>
+</div>

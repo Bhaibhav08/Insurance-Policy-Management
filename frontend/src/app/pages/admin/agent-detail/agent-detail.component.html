@@ -1,0 +1,373 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <a routerLink="/admin/users" 
+             class="text-gray-600 hover:text-gray-900 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </a>
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">Agent Details</h1>
+            <p class="text-gray-600 mt-1">View agent profile and performance</p>
+          </div>
+        </div>
+        <button (click)="loadAgentDetails()" 
+                class="btn-secondary">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-20">
+      <div class="bg-white p-8 rounded-lg shadow-sm max-w-md mx-auto">
+        <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-6">
+          <svg class="animate-spin w-8 h-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">Loading Agent Details</h3>
+        <p class="text-gray-600">Please wait while we fetch the information...</p>
+      </div>
+    </div>
+
+    <!-- Agent Details Content -->
+    <div *ngIf="!isLoading && agent" class="space-y-6">
+      <!-- Agent Overview Card -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-start space-x-6">
+          <!-- Avatar -->
+          <div class="flex-shrink-0">
+            <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+              <span class="text-white text-2xl font-bold">
+                {{ agent.name?.charAt(0)?.toUpperCase() }}
+              </span>
+            </div>
+          </div>
+          
+          <!-- Basic Info -->
+          <div class="flex-1">
+            <h2 class="text-2xl font-bold text-gray-900">{{ agent.name }}</h2>
+            <p class="text-gray-600">{{ agent.email }}</p>
+            <p class="text-gray-600">{{ agent.phone || 'No phone number' }}</p>
+            
+            <!-- Status Badges -->
+            <div class="mt-4 flex space-x-2">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                Agent
+              </span>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ getStatusColor(agent.kycStatus) }}">
+                KYC {{ agent.kycStatus | titlecase }}
+              </span>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ agent.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                {{ agent.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Statistics -->
+          <div class="flex-shrink-0">
+            <div class="grid grid-cols-2 gap-4 text-center">
+              <div>
+                <p class="text-2xl font-bold text-gray-900">{{ statistics.assignedCustomers || 0 }}</p>
+                <p class="text-sm text-gray-600">Customers</p>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-gray-900">{{ statistics.assignedPolicies || 0 }}</p>
+                <p class="text-sm text-gray-600">Policies</p>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-yellow-600">{{ statistics.pendingClaims || 0 }}</p>
+                <p class="text-sm text-gray-600">Pending Claims</p>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-green-600">{{ statistics.totalClaims || 0 }}</p>
+                <p class="text-sm text-gray-600">Total Claims</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="border-b border-gray-200">
+          <nav class="-mb-px flex space-x-8 px-6">
+            <button (click)="setActiveTab('overview')" 
+                    [class]="activeTab === 'overview' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+              Overview
+            </button>
+            <button (click)="setActiveTab('customers')" 
+                    [class]="activeTab === 'customers' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+              Assigned Customers ({{ assignedCustomers.length }})
+            </button>
+            <button (click)="setActiveTab('policies')" 
+                    [class]="activeTab === 'policies' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+              Assigned Policies ({{ assignedPolicies.length }})
+            </button>
+            <button (click)="setActiveTab('claims')" 
+                    [class]="activeTab === 'claims' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+              Claims ({{ claims.length }})
+            </button>
+          </nav>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="p-6">
+          <!-- Overview Tab -->
+          <div *ngIf="activeTab === 'overview'" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Performance Metrics -->
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Performance Metrics</h3>
+                <div class="space-y-4">
+                  <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Assigned Customers</span>
+                    <span class="font-medium text-blue-600">{{ statistics.assignedCustomers || 0 }}</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Assigned Policies</span>
+                    <span class="font-medium text-green-600">{{ statistics.assignedPolicies || 0 }}</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Pending Claims</span>
+                    <span class="font-medium text-yellow-600">{{ statistics.pendingClaims || 0 }}</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Total Claims</span>
+                    <span class="font-medium text-gray-900">{{ statistics.totalClaims || 0 }}</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Approved Claims</span>
+                    <span class="font-medium text-green-600">{{ statistics.approvedClaims || 0 }}</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2">
+                    <span class="text-gray-600">Rejected Claims</span>
+                    <span class="font-medium text-red-600">{{ statistics.rejectedClaims || 0 }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Agent Information -->
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Agent Information</h3>
+                <div class="space-y-3">
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Name</label>
+                    <p class="text-gray-900">{{ agent.name }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Email</label>
+                    <p class="text-gray-900">{{ agent.email }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Phone</label>
+                    <p class="text-gray-900">{{ agent.phone || 'Not provided' }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">KYC Status</label>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ getStatusColor(agent.kycStatus) }}">
+                      {{ agent.kycStatus | titlecase }}
+                    </span>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Status</label>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ agent.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                      {{ agent.isActive ? 'Active' : 'Inactive' }}
+                    </span>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Last Login</label>
+                    <p class="text-gray-900">{{ agent.lastLogin ? formatDate(agent.lastLogin) : 'Never' }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Joined</label>
+                    <p class="text-gray-900">{{ formatDate(agent.createdAt) }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Assigned Customers Tab -->
+          <div *ngIf="activeTab === 'customers'">
+            <div *ngIf="assignedCustomers.length > 0; else noCustomers">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div *ngFor="let customer of assignedCustomers" 
+                     class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                  <div class="flex items-start space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center">
+                      <span class="text-white text-lg font-bold">
+                        {{ customer.name?.charAt(0)?.toUpperCase() }}
+                      </span>
+                    </div>
+                    <div class="flex-1">
+                      <h4 class="text-lg font-semibold text-gray-900">{{ customer.name }}</h4>
+                      <p class="text-sm text-gray-600">{{ customer.email }}</p>
+                      <p class="text-sm text-gray-500">{{ customer.phone || 'No phone' }}</p>
+                      <div class="mt-2">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ getStatusColor(customer.kycStatus) }}">
+                          KYC {{ customer.kycStatus | titlecase }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mt-4 text-sm text-gray-600">
+                    <p>Last Login: {{ customer.lastLogin ? formatDate(customer.lastLogin) : 'Never' }}</p>
+                    <p>Joined: {{ formatDate(customer.createdAt) }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <ng-template #noCustomers>
+              <div class="text-center py-12">
+                <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No Assigned Customers</h3>
+                <p class="text-gray-600">This agent has no customers assigned yet.</p>
+              </div>
+            </ng-template>
+          </div>
+
+          <!-- Assigned Policies Tab -->
+          <div *ngIf="activeTab === 'policies'">
+            <div *ngIf="assignedPolicies.length > 0; else noPolicies">
+              <div class="space-y-4">
+                <div *ngFor="let policy of assignedPolicies" 
+                     class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                      <h4 class="text-lg font-semibold text-gray-900">{{ policy.policyProductId?.title || 'Policy' }}</h4>
+                      <p class="text-gray-600">{{ policy.policyProductId?.code || 'N/A' }}</p>
+                      <div class="mt-2 grid grid-cols-2 gap-4">
+                        <div>
+                          <label class="text-sm font-medium text-gray-500">Customer</label>
+                          <p class="text-gray-900">{{ policy.userId?.name || 'Unknown' }}</p>
+                        </div>
+                        <div>
+                          <label class="text-sm font-medium text-gray-500">Premium</label>
+                          <p class="text-gray-900">{{ formatCurrency(policy.policyProductId?.premium || 0) }}</p>
+                        </div>
+                        <div>
+                          <label class="text-sm font-medium text-gray-500">Category</label>
+                          <p class="text-gray-900">{{ policy.policyProductId?.category || 'N/A' }}</p>
+                        </div>
+                        <div>
+                          <label class="text-sm font-medium text-gray-500">Status</label>
+                          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ getStatusColor(policy.status) }}">
+                            {{ policy.status }}
+                          </span>
+                        </div>
+                        <div>
+                          <label class="text-sm font-medium text-gray-500">Purchase Date</label>
+                          <p class="text-gray-900">{{ formatDate(policy.createdAt) }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <ng-template #noPolicies>
+              <div class="text-center py-12">
+                <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.57M15 6.75a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No Assigned Policies</h3>
+                <p class="text-gray-600">This agent has no policies assigned yet.</p>
+              </div>
+            </ng-template>
+          </div>
+
+          <!-- Claims Tab -->
+          <div *ngIf="activeTab === 'claims'">
+            <div *ngIf="claims.length > 0; else noClaims">
+              <div class="space-y-4">
+                <div *ngFor="let claim of claims" 
+                     class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                      <div class="flex items-center space-x-4 mb-2">
+                        <h4 class="text-lg font-semibold text-gray-900">{{ formatCurrency(claim.amountClaimed) }}</h4>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ getStatusColor(claim.status) }}">
+                          {{ claim.status }}
+                        </span>
+                      </div>
+                      <p class="text-gray-600 mb-2">{{ claim.description }}</p>
+                      <div class="grid grid-cols-2 gap-4">
+                        <div>
+                          <label class="text-sm font-medium text-gray-500">Customer</label>
+                          <p class="text-gray-900">{{ claim.userId?.name || 'Unknown' }}</p>
+                        </div>
+                        <div>
+                          <label class="text-sm font-medium text-gray-500">Policy</label>
+                          <p class="text-gray-900">{{ claim.userPolicyId?.policyProductId?.title || 'N/A' }}</p>
+                        </div>
+                        <div>
+                          <label class="text-sm font-medium text-gray-500">Incident Date</label>
+                          <p class="text-gray-900">{{ formatDate(claim.incidentDate) }}</p>
+                        </div>
+                        <div>
+                          <label class="text-sm font-medium text-gray-500">Filed Date</label>
+                          <p class="text-gray-900">{{ formatDate(claim.createdAt) }}</p>
+                        </div>
+                        <div *ngIf="claim.decisionNotes">
+                          <label class="text-sm font-medium text-gray-500">Notes</label>
+                          <p class="text-gray-900">{{ claim.decisionNotes }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <ng-template #noClaims>
+              <div class="text-center py-12">
+                <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No Claims</h3>
+                <p class="text-gray-600">This agent has no claims assigned yet.</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!isLoading && !agent" class="text-center py-20">
+      <div class="bg-white p-8 rounded-lg shadow-sm max-w-md mx-auto">
+        <svg class="w-12 h-12 mx-auto text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">Agent Not Found</h3>
+        <p class="text-gray-600">The agent you're looking for doesn't exist.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+

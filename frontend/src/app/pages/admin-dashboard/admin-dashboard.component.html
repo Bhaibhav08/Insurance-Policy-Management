@@ -1,0 +1,385 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Admin Dashboard</h1>
+    
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-12">
+      <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-white bg-primary-500">
+        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Loading admin data...
+      </div>
+    </div>
+
+    <!-- Admin Dashboard Content -->
+    <div *ngIf="!isLoading">
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="insurance-card p-6">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Total Users</p>
+              <p class="text-2xl font-semibold text-gray-900">{{ stats.totalUsers }}</p>
+              <p class="text-xs text-gray-500">{{ stats.totalCustomers }} customers, {{ stats.totalAgents }} agents</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="insurance-card p-6">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.57M15 6.75a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Total Policies</p>
+              <p class="text-2xl font-semibold text-gray-900">{{ stats.totalPolicies }}</p>
+              <p class="text-xs text-gray-500">Active policies</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="insurance-card p-6">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Pending Claims</p>
+              <p class="text-2xl font-semibold text-gray-900">{{ stats.pendingClaims }}</p>
+              <p class="text-xs text-gray-500">{{ stats.approvedClaims }} approved, {{ stats.rejectedClaims }} rejected</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="insurance-card p-6">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Monthly Revenue</p>
+              <p class="text-2xl font-semibold text-gray-900">{{ formatCurrency(stats.monthlyRevenue) }}</p>
+              <p class="text-xs text-gray-500">This month</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <a routerLink="/admin/create-policy" 
+             class="insurance-card p-6 card-hover group">
+            <div class="flex items-center">
+              <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-primary-200 transition-colors">
+                <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-medium text-gray-900 group-hover:text-primary-600 transition-colors">Create Policy</h3>
+                <p class="text-sm text-gray-600">Add new insurance policy</p>
+              </div>
+            </div>
+          </a>
+
+          <a routerLink="/admin/users" 
+             class="insurance-card p-6 card-hover group">
+            <div class="flex items-center">
+              <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-blue-200 transition-colors">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-medium text-gray-900 group-hover:text-primary-600 transition-colors">Manage Users</h3>
+                <p class="text-sm text-gray-600">View agents and customers</p>
+              </div>
+            </div>
+          </a>
+
+          <a routerLink="/admin/audit" 
+             class="insurance-card p-6 card-hover group">
+            <div class="flex items-center">
+              <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-yellow-200 transition-colors">
+                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-medium text-gray-900 group-hover:text-primary-600 transition-colors">Audit Logs</h3>
+                <p class="text-sm text-gray-600">View system activity</p>
+              </div>
+            </div>
+          </a>
+
+          <a routerLink="/policies" 
+             class="insurance-card p-6 card-hover group">
+            <div class="flex items-center">
+              <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-green-200 transition-colors">
+                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.57M15 6.75a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-medium text-gray-900 group-hover:text-primary-600 transition-colors">View Policies</h3>
+                <p class="text-sm text-gray-600">Browse all policies</p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Policies Overview -->
+      <div class="mb-8">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-semibold text-gray-900">Policies Overview</h2>
+          <a routerLink="/policies" class="text-blue-600 hover:text-blue-700 font-medium">
+            View All Policies →
+          </a>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div *ngFor="let policy of policies.slice(0, 8)" 
+               class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden">
+            
+            <!-- Policy Image -->
+            <div class="relative h-32 overflow-hidden">
+              <img [src]="policy.image || 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400'" [alt]="policy.title" 
+                   class="w-full h-full object-cover">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+              
+              <!-- Category Badge -->
+              <div class="absolute top-2 right-2">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold text-white bg-blue-600">
+                  {{ policy.category | titlecase }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Policy Content -->
+            <div class="p-4">
+              <h3 class="font-semibold text-gray-900 mb-2 line-clamp-1">{{ policy.title }}</h3>
+              <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ policy.description }}</p>
+              
+              <!-- Stats -->
+              <div class="space-y-2 mb-3">
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-gray-600">Premium</span>
+                  <span class="font-semibold text-gray-900">₹{{ policy.premium | number }}</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-gray-600">Category</span>
+                  <span class="font-medium text-blue-600">{{ policy.category | titlecase }}</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-gray-600">Term</span>
+                  <span class="font-medium text-green-600">{{ policy.termMonths }} months</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-gray-600">Sum Insured</span>
+                  <span class="font-medium text-purple-600">₹{{ policy.minSumInsured | number }}</span>
+                </div>
+              </div>
+              
+              <!-- Status Badge -->
+              <div class="flex justify-center mb-2">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                      [class]="policy.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
+                  {{ policy.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="policies.length > 8" class="text-center mt-6">
+          <a routerLink="/policies" 
+             class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-200">
+            View All {{ policies.length }} Policies
+          </a>
+        </div>
+      </div>
+
+      <!-- System Overview -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-8 mb-8">
+        <!-- System Stats -->
+        <div class="insurance-card p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">System Overview</h2>
+          <div class="space-y-4">
+            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+              <span class="text-gray-600">Total Users</span>
+              <span class="font-medium">{{ stats.totalUsers }}</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+              <span class="text-gray-600">Customers</span>
+              <span class="font-medium">{{ stats.totalCustomers }}</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+              <span class="text-gray-600">Agents</span>
+              <span class="font-medium">{{ stats.totalAgents }}</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+              <span class="text-gray-600">Total Policies</span>
+              <span class="font-medium">{{ stats.totalPolicies }}</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+              <span class="text-gray-600">Pending Claims</span>
+              <span class="font-medium text-yellow-600">{{ stats.pendingClaims }}</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+              <span class="text-gray-600">Approved Claims</span>
+              <span class="font-medium text-green-600">{{ stats.approvedClaims }}</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+              <span class="text-gray-600">Rejected Claims</span>
+              <span class="font-medium text-red-600">{{ stats.rejectedClaims }}</span>
+            </div>
+            <div class="flex justify-between items-center py-2">
+              <span class="text-gray-600">Monthly Revenue</span>
+              <span class="font-medium text-green-600">{{ formatCurrency(stats.monthlyRevenue) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Agents -->
+        <div class="insurance-card p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-900">Recent Agents</h2>
+            <a routerLink="/admin/users" class="text-primary-600 hover:text-primary-700 text-sm font-medium">
+              View All →
+            </a>
+          </div>
+          <div class="space-y-3">
+            <div *ngFor="let agent of agents.slice(0, 4)" class="flex items-center justify-between py-2">
+              <div class="flex items-center">
+                <div class="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center mr-3">
+                  <span class="text-sm font-medium text-blue-800">{{ agent.name.charAt(0) }}</span>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-gray-900">{{ agent.name }}</p>
+                  <p class="text-xs text-gray-500">{{ agent.email }}</p>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  Agent
+                </span>
+                <a [routerLink]="['/admin/agent-detail', agent._id]" 
+                   class="text-blue-600 hover:text-blue-800 text-xs font-medium">
+                  View →
+                </a>
+              </div>
+            </div>
+            <div *ngIf="agents.length === 0" class="text-center py-4 text-gray-500">
+              No agents found
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Customers -->
+        <div class="insurance-card p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-900">Recent Customers</h2>
+            <a routerLink="/admin/users" class="text-primary-600 hover:text-primary-700 text-sm font-medium">
+              View All →
+            </a>
+          </div>
+          <div class="space-y-3">
+            <div *ngFor="let customer of customers.slice(0, 4)" class="flex items-center justify-between py-2">
+              <div class="flex items-center">
+                <div class="w-8 h-8 bg-green-200 rounded-full flex items-center justify-center mr-3">
+                  <span class="text-sm font-medium text-green-800">{{ customer.name.charAt(0) }}</span>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-gray-900">{{ customer.name }}</p>
+                  <p class="text-xs text-gray-500">{{ customer.email }}</p>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  Customer
+                </span>
+                <a [routerLink]="['/admin/customer-detail', customer._id]" 
+                   class="text-green-600 hover:text-green-800 text-xs font-medium">
+                  View →
+                </a>
+              </div>
+            </div>
+            <div *ngIf="customers.length === 0" class="text-center py-4 text-gray-500">
+              No customers found
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Claims -->
+        <div class="insurance-card p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-900">Recent Claims</h2>
+            <a routerLink="/claims" class="text-primary-600 hover:text-primary-700 text-sm font-medium">
+              View All →
+            </a>
+          </div>
+          <div class="space-y-3">
+            <div *ngFor="let claim of recentClaims.slice(0, 4)" class="py-2">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-sm font-medium text-gray-900">{{ claim.userId?.name || 'Unknown' }}</p>
+                  <p class="text-xs text-gray-500">{{ claim.description }}</p>
+                  <p class="text-xs text-gray-600">{{ formatCurrency(claim.amountClaimed) }}</p>
+                </div>
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                      [class]="claim.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' : 
+                               claim.status === 'APPROVED' ? 'bg-green-100 text-green-800' : 
+                               'bg-red-100 text-red-800'">
+                  {{ claim.status }}
+                </span>
+              </div>
+            </div>
+            <div *ngIf="recentClaims.length === 0" class="text-center py-4 text-gray-500">
+              No claims found
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Revenue Chart -->
+      <div class="insurance-card p-6 mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Monthly Revenue Trend</h2>
+        <div class="grid grid-cols-6 gap-4">
+          <div *ngFor="let data of monthlyRevenueData" class="text-center">
+            <div class="bg-gray-200 rounded-lg h-32 flex items-end justify-center mb-2">
+              <div class="bg-primary-500 rounded-t-lg w-full" 
+                   [style.height.%]="(data.revenue / 500000) * 100"></div>
+            </div>
+            <p class="text-xs text-gray-600">{{ data.month }}</p>
+            <p class="text-xs font-medium text-gray-900">{{ formatCurrency(data.revenue) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

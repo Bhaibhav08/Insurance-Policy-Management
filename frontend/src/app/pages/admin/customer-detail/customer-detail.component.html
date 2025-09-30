@@ -1,0 +1,486 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <a routerLink="/admin/users" 
+             class="text-gray-600 hover:text-gray-900 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </a>
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">Customer Profile</h1>
+            <p class="text-gray-600 mt-1">View customer details and profile information</p>
+          </div>
+        </div>
+        <button (click)="loadCustomerDetails()" 
+                class="btn-secondary">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-20">
+      <div class="bg-white p-8 rounded-lg shadow-sm max-w-md mx-auto">
+        <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-6">
+          <svg class="animate-spin w-8 h-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">Loading Customer Details</h3>
+        <p class="text-gray-600">Please wait while we fetch the information...</p>
+      </div>
+    </div>
+
+    <!-- Customer Details Content -->
+    <div *ngIf="!isLoading && customer" class="space-y-6">
+      <!-- Customer Overview Card -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-start space-x-6">
+          <!-- Avatar -->
+          <div class="flex-shrink-0">
+            <div class="w-20 h-20 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center">
+              <span class="text-white text-2xl font-bold">
+                {{ customer.name?.charAt(0)?.toUpperCase() }}
+              </span>
+            </div>
+          </div>
+          
+          <!-- Basic Info -->
+          <div class="flex-1">
+            <h2 class="text-2xl font-bold text-gray-900">{{ customer.name }}</h2>
+            <p class="text-gray-600">{{ customer.email }}</p>
+            <p class="text-gray-600">{{ customer.phone || 'No phone number' }}</p>
+            
+            <!-- Status Badges -->
+            <div class="mt-4 flex space-x-2">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                Customer
+              </span>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ getStatusColor(customer.kycStatus) }}">
+                KYC {{ customer.kycStatus | titlecase }}
+              </span>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ customer.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                {{ customer.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Statistics -->
+          <div class="flex-shrink-0">
+            <div class="grid grid-cols-2 gap-4 text-center">
+              <div>
+                <p class="text-2xl font-bold text-gray-900">{{ statistics.totalPolicies || 0 }}</p>
+                <p class="text-sm text-gray-600">Policies</p>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-green-600">{{ statistics.activePolicies || 0 }}</p>
+                <p class="text-sm text-gray-600">Active</p>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-yellow-600">{{ statistics.pendingClaims || 0 }}</p>
+                <p class="text-sm text-gray-600">Pending Claims</p>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-blue-600">{{ statistics.totalClaims || 0 }}</p>
+                <p class="text-sm text-gray-600">Total Claims</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="border-b border-gray-200">
+          <nav class="-mb-px flex space-x-8 px-6">
+            <button (click)="setActiveTab('overview')" 
+                    [class]="activeTab === 'overview' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+              Overview
+            </button>
+            <button (click)="setActiveTab('profile')" 
+                    [class]="activeTab === 'profile' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+              Profile Details
+            </button>
+            <button (click)="setActiveTab('nominees')" 
+                    [class]="activeTab === 'nominees' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+              Nominees ({{ customer.nominees?.length || 0 }})
+            </button>
+            <button (click)="setActiveTab('policies')" 
+                    [class]="activeTab === 'policies' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+              Policies ({{ policies.length }})
+            </button>
+            <button (click)="setActiveTab('claims')" 
+                    [class]="activeTab === 'claims' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+              Claims ({{ claims.length }})
+            </button>
+          </nav>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="p-6">
+          <!-- Overview Tab -->
+          <div *ngIf="activeTab === 'overview'" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Performance Metrics -->
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Customer Statistics</h3>
+                <div class="space-y-4">
+                  <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Total Policies</span>
+                    <span class="font-medium text-blue-600">{{ statistics.totalPolicies || 0 }}</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Active Policies</span>
+                    <span class="font-medium text-green-600">{{ statistics.activePolicies || 0 }}</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Pending Claims</span>
+                    <span class="font-medium text-yellow-600">{{ statistics.pendingClaims || 0 }}</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Total Claims</span>
+                    <span class="font-medium text-gray-900">{{ statistics.totalClaims || 0 }}</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Approved Claims</span>
+                    <span class="font-medium text-green-600">{{ statistics.approvedClaims || 0 }}</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2">
+                    <span class="text-gray-600">Rejected Claims</span>
+                    <span class="font-medium text-red-600">{{ statistics.rejectedClaims || 0 }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Customer Information -->
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Customer Information</h3>
+                <div class="space-y-3">
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Name</label>
+                    <p class="text-gray-900">{{ customer.name }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Email</label>
+                    <p class="text-gray-900">{{ customer.email }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Phone</label>
+                    <p class="text-gray-900">{{ customer.phone || 'Not provided' }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">KYC Status</label>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ getStatusColor(customer.kycStatus) }}">
+                      {{ customer.kycStatus | titlecase }}
+                    </span>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Status</label>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ customer.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                      {{ customer.isActive ? 'Active' : 'Inactive' }}
+                    </span>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Last Login</label>
+                    <p class="text-gray-900">{{ customer.lastLogin ? formatDate(customer.lastLogin) : 'Never' }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Joined</label>
+                    <p class="text-gray-900">{{ formatDate(customer.createdAt) }}</p>
+                  </div>
+                  <div *ngIf="customer.assignedAgent">
+                    <label class="text-sm font-medium text-gray-500">Assigned Agent</label>
+                    <p class="text-gray-900">{{ customer.assignedAgent.name }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile Details Tab -->
+          <div *ngIf="activeTab === 'profile'" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Personal Information -->
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
+                <div class="space-y-3">
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Full Name</label>
+                    <p class="text-gray-900">{{ customer.name }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Date of Birth</label>
+                    <p class="text-gray-900">{{ customer.dateOfBirth ? formatDate(customer.dateOfBirth) : 'Not provided' }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Gender</label>
+                    <p class="text-gray-900">{{ customer.profile?.gender ? getGenderLabel(customer.profile.gender) : 'Not provided' }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Marital Status</label>
+                    <p class="text-gray-900">{{ customer.profile?.maritalStatus ? getMaritalStatusLabel(customer.profile.maritalStatus) : 'Not provided' }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contact Information -->
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
+                <div class="space-y-3">
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Email</label>
+                    <p class="text-gray-900">{{ customer.email }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Phone</label>
+                    <p class="text-gray-900">{{ customer.phone || 'Not provided' }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Address</label>
+                    <p class="text-gray-900">
+                      <span *ngIf="customer.profile?.address">
+                        {{ customer.profile.address.street }}, {{ customer.profile.address.city }}, 
+                        {{ customer.profile.address.state }} {{ customer.profile.address.postalCode }}
+                      </span>
+                      <span *ngIf="!customer.profile?.address">Not provided</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Professional Information -->
+            <div *ngIf="customer.profile?.occupation || customer.profile?.employer || customer.profile?.annualIncome">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">Professional Information</h3>
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div>
+                  <label class="text-sm font-medium text-gray-500">Occupation</label>
+                  <p class="text-gray-900">{{ customer.profile?.occupation || 'Not provided' }}</p>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-gray-500">Employer</label>
+                  <p class="text-gray-900">{{ customer.profile?.employer || 'Not provided' }}</p>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-gray-500">Annual Income</label>
+                  <p class="text-gray-900">{{ customer.profile?.annualIncome ? formatCurrency(customer.profile.annualIncome) : 'Not provided' }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Documents -->
+            <div *ngIf="customer.profile?.documents">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">Documents</h3>
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <label class="text-sm font-medium text-gray-500">PAN Number</label>
+                  <p class="text-gray-900">{{ customer.profile.documents.panNumber || 'Not provided' }}</p>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-gray-500">Aadhar Number</label>
+                  <p class="text-gray-900">{{ customer.profile.documents.aadharNumber || 'Not provided' }}</p>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-gray-500">Driving License</label>
+                  <p class="text-gray-900">{{ customer.profile.documents.drivingLicense || 'Not provided' }}</p>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-gray-500">Passport Number</label>
+                  <p class="text-gray-900">{{ customer.profile.documents.passportNumber || 'Not provided' }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nominees Tab -->
+          <div *ngIf="activeTab === 'nominees'">
+            <div *ngIf="customer.nominees && customer.nominees.length > 0; else noNominees">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div *ngFor="let nominee of customer.nominees; let i = index" 
+                     class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                  <div class="flex items-start justify-between mb-4">
+                    <h4 class="text-lg font-semibold text-gray-900">{{ nominee.name }}</h4>
+                    <div class="flex space-x-2">
+                      <span *ngIf="nominee.isPrimary" 
+                            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        Primary
+                      </span>
+                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                        {{ getRelationshipLabel(nominee.relationship) }}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div class="space-y-3">
+                    <div>
+                      <label class="text-sm font-medium text-gray-500">Date of Birth</label>
+                      <p class="text-gray-900">{{ nominee.dateOfBirth ? formatDate(nominee.dateOfBirth) : 'Not provided' }}</p>
+                    </div>
+                    <div>
+                      <label class="text-sm font-medium text-gray-500">Phone</label>
+                      <p class="text-gray-900">{{ nominee.phone || 'Not provided' }}</p>
+                    </div>
+                    <div>
+                      <label class="text-sm font-medium text-gray-500">Email</label>
+                      <p class="text-gray-900">{{ nominee.email || 'Not provided' }}</p>
+                    </div>
+                    <div>
+                      <label class="text-sm font-medium text-gray-500">Share Percentage</label>
+                      <p class="text-gray-900">{{ nominee.sharePercentage || 100 }}%</p>
+                    </div>
+                    <div *ngIf="nominee.address">
+                      <label class="text-sm font-medium text-gray-500">Address</label>
+                      <p class="text-gray-900">
+                        {{ nominee.address.street }}, {{ nominee.address.city }}, 
+                        {{ nominee.address.state }} {{ nominee.address.postalCode }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <ng-template #noNominees>
+              <div class="text-center py-12">
+                <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No Nominees</h3>
+                <p class="text-gray-600">This customer has not added any nominees yet.</p>
+              </div>
+            </ng-template>
+          </div>
+
+          <!-- Policies Tab -->
+          <div *ngIf="activeTab === 'policies'">
+            <div *ngIf="policies.length > 0; else noPolicies">
+              <div class="space-y-4">
+                <div *ngFor="let policy of policies" 
+                     class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                      <h4 class="text-lg font-semibold text-gray-900">{{ policy.policyProductId?.title || 'Policy' }}</h4>
+                      <p class="text-gray-600">{{ policy.policyProductId?.code || 'N/A' }}</p>
+                      <div class="mt-2 grid grid-cols-2 gap-4">
+                        <div>
+                          <label class="text-sm font-medium text-gray-500">Premium</label>
+                          <p class="text-gray-900">{{ formatCurrency(policy.policyProductId?.premium || 0) }}</p>
+                        </div>
+                        <div>
+                          <label class="text-sm font-medium text-gray-500">Category</label>
+                          <p class="text-gray-900">{{ policy.policyProductId?.category || 'N/A' }}</p>
+                        </div>
+                        <div>
+                          <label class="text-sm font-medium text-gray-500">Purchase Date</label>
+                          <p class="text-gray-900">{{ formatDate(policy.createdAt) }}</p>
+                        </div>
+                        <div>
+                          <label class="text-sm font-medium text-gray-500">Status</label>
+                          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ getStatusColor(policy.status) }}">
+                            {{ policy.status }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <ng-template #noPolicies>
+              <div class="text-center py-12">
+                <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.57M15 6.75a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No Policies</h3>
+                <p class="text-gray-600">This customer has not purchased any policies yet.</p>
+              </div>
+            </ng-template>
+          </div>
+
+          <!-- Claims Tab -->
+          <div *ngIf="activeTab === 'claims'">
+            <div *ngIf="claims.length > 0; else noClaims">
+              <div class="space-y-4">
+                <div *ngFor="let claim of claims" 
+                     class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                      <div class="flex items-center space-x-4 mb-2">
+                        <h4 class="text-lg font-semibold text-gray-900">{{ formatCurrency(claim.amountClaimed) }}</h4>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ getStatusColor(claim.status) }}">
+                          {{ claim.status }}
+                        </span>
+                      </div>
+                      <p class="text-gray-600 mb-2">{{ claim.description }}</p>
+                      <div class="grid grid-cols-2 gap-4">
+                        <div>
+                          <label class="text-sm font-medium text-gray-500">Incident Date</label>
+                          <p class="text-gray-900">{{ formatDate(claim.incidentDate) }}</p>
+                        </div>
+                        <div>
+                          <label class="text-sm font-medium text-gray-500">Filed Date</label>
+                          <p class="text-gray-900">{{ formatDate(claim.createdAt) }}</p>
+                        </div>
+                        <div>
+                          <label class="text-sm font-medium text-gray-500">Policy</label>
+                          <p class="text-gray-900">{{ claim.userPolicyId?.policyProductId?.title || 'N/A' }}</p>
+                        </div>
+                        <div *ngIf="claim.decisionNotes">
+                          <label class="text-sm font-medium text-gray-500">Notes</label>
+                          <p class="text-gray-900">{{ claim.decisionNotes }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <ng-template #noClaims>
+              <div class="text-center py-12">
+                <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No Claims</h3>
+                <p class="text-gray-600">This customer has not filed any claims yet.</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!isLoading && !customer" class="text-center py-20">
+      <div class="bg-white p-8 rounded-lg shadow-sm max-w-md mx-auto">
+        <svg class="w-12 h-12 mx-auto text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">Customer Not Found</h3>
+        <p class="text-gray-600">The customer you're looking for doesn't exist.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
