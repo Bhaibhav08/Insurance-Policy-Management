@@ -180,4 +180,19 @@ export class AdminDashboardComponent implements OnInit {
   calculatePercentage(value: number): number {
     return Math.min(value * 4, 100);
   }
+
+  deletePolicy(policyId: string, policyTitle: string): void {
+    if (confirm(`Are you sure you want to delete the policy "${policyTitle}"? This action cannot be undone.`)) {
+      this.apiService.deletePolicy(policyId).subscribe({
+        next: (response) => {
+          console.log('Policy deleted successfully:', response);
+          this.loadPolicies(); // Reload the policies list
+        },
+        error: (error) => {
+          console.error('Error deleting policy:', error);
+          alert('Failed to delete policy: ' + (error.error?.message || 'Unknown error'));
+        }
+      });
+    }
+  }
 }

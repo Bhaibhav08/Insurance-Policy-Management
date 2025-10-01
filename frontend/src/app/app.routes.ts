@@ -99,6 +99,12 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/admin/create-policy/create-policy.component').then(m => m.CreatePolicyComponent)
   },
   {
+    path: 'admin/policies',
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['admin'] },
+    loadComponent: () => import('./pages/admin/policies/policies.component').then(m => m.PoliciesComponent)
+  },
+  {
     path: 'admin/agent-detail/:id',
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['admin'] },

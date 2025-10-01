@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Features Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .feature { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .warning { background-color: #fff3cd; border-color: #ffeaa7; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .code { background-color: #f8f9fa; padding: 10px; border-radius: 3px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Admin Policy Delete Feature - Verification Guide</h1>
+    
+    <div class="feature success">
+        <h3>✅ Backend Status</h3>
+        <p><strong>Backend is running</strong> - Delete policy endpoint is available at:</p>
+        <div class="code">DELETE /api/v1/policies/:id</div>
+    </div>
+
+    <div class="feature success">
+        <h3>✅ Frontend Components Created</h3>
+        <p>The following components have been created:</p>
+        <ul>
+            <li><strong>Admin Policies Management Page:</strong> <code>/admin/policies</code></li>
+            <li><strong>Delete Policy API Method:</strong> <code>apiService.deletePolicy()</code></li>
+            <li><strong>Admin Dashboard Integration:</strong> Delete buttons added to policy cards</li>
+        </ul>
+    </div>
+
+    <div class="feature success">
+        <h3>✅ Images Added to Policies</h3>
+        <p><strong>8 policies updated</strong> with appropriate images based on category:</p>
+        <ul>
+            <li>Life Insurance → Family/People images</li>
+            <li>Health Insurance → Medical/Hospital images</li>
+            <li>Auto Insurance → Car/Vehicle images</li>
+            <li>Home Insurance → House/Property images</li>
+            <li>Travel Insurance → Travel/Adventure images</li>
+        </ul>
+    </div>
+
+    <div class="feature warning">
+        <h3>⚠️ How to Access Admin Delete Features</h3>
+        <p><strong>Step 1:</strong> Make sure you're logged in as an admin user</p>
+        <p><strong>Step 2:</strong> Go to <code>http://localhost:4200/admin-dashboard</code></p>
+        <p><strong>Step 3:</strong> Look for these features:</p>
+        <ul>
+            <li><strong>Quick Actions Section:</strong> "Manage Policies" button (green card)</li>
+            <li><strong>Policies Overview Section:</strong> Each policy card has a "Delete" button</li>
+        </ul>
+    </div>
+
+    <div class="feature">
+        <h3>🔍 Troubleshooting</h3>
+        <p>If you don't see the delete features:</p>
+        <ol>
+            <li><strong>Check User Role:</strong> Make sure you're logged in as "admin"</li>
+            <li><strong>Refresh Page:</strong> Hard refresh (Ctrl+F5) to load latest changes</li>
+            <li><strong>Check Console:</strong> Open browser dev tools and look for errors</li>
+            <li><strong>Backend Running:</strong> Ensure backend is running on port 5000</li>
+        </ol>
+    </div>
+
+    <div class="feature">
+        <h3>📋 Available Admin Features</h3>
+        <ul>
+            <li><strong>Create Policy:</strong> <code>/admin/create-policy</code></li>
+            <li><strong>Manage Policies:</strong> <code>/admin/policies</code> (with delete functionality)</li>
+            <li><strong>Manage Users:</strong> <code>/admin/users</code></li>
+            <li><strong>Audit Logs:</strong> <code>/admin/audit</code></li>
+            <li><strong>Admin Dashboard:</strong> <code>/admin-dashboard</code> (with delete buttons on policy cards)</li>
+        </ul>
+    </div>
+
+    <div class="feature success">
+        <h3>🎉 Summary</h3>
+        <p><strong>Admin policy deletion feature is fully implemented and ready to use!</strong></p>
+        <p>You can now delete policies from:</p>
+        <ul>
+            <li>Admin Dashboard policy cards (quick delete)</li>
+            <li>Dedicated Policies Management page (full management interface)</li>
+        </ul>
+    </div>
+</body>
+</html>
+

@@ -277,7 +277,19 @@ export class ApiService {
   }
 
   createPolicy(policyData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/admin/policies`, policyData, {
+    return this.http.post(`${this.baseUrl}/policies`, policyData, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  updatePolicy(policyId: string, policyData: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/policies/${policyId}`, policyData, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  deletePolicy(policyId: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/policies/${policyId}`, {
       headers: this.getAuthHeaders()
     });
   }

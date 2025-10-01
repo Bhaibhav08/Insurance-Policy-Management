@@ -1,0 +1,62 @@
+/* Policies Management Component Styles */
+
+.btn-primary {
+  @apply inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500;
+}
+
+.insurance-card {
+  @apply bg-white rounded-lg shadow-sm border border-gray-200;
+}
+
+/* Custom styles for better table appearance */
+.table-hover tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* Status badge styles */
+.status-active {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800;
+}
+
+.status-inactive {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800;
+}
+
+/* Pagination styles */
+.pagination-button {
+  @apply relative inline-flex items-center px-4 py-2 border text-sm font-medium;
+}
+
+.pagination-button-active {
+  @apply z-10 bg-primary-50 border-primary-500 text-primary-600;
+}
+
+.pagination-button-inactive {
+  @apply bg-white border-gray-300 text-gray-500 hover:bg-gray-50;
+}
+
+/* Loading animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Responsive table */
+@media (max-width: 640px) {
+  .table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+

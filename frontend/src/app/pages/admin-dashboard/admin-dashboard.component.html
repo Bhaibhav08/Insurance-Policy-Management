@@ -135,7 +135,7 @@
             </div>
           </a>
 
-          <a routerLink="/policies" 
+          <a routerLink="/admin/policies" 
              class="insurance-card p-6 card-hover group">
             <div class="flex items-center">
               <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-green-200 transition-colors">
@@ -144,8 +144,8 @@
                 </svg>
               </div>
               <div>
-                <h3 class="font-medium text-gray-900 group-hover:text-primary-600 transition-colors">View Policies</h3>
-                <p class="text-sm text-gray-600">Browse all policies</p>
+                <h3 class="font-medium text-gray-900 group-hover:text-primary-600 transition-colors">Manage Policies</h3>
+                <p class="text-sm text-gray-600">View, edit, and delete policies</p>
               </div>
             </div>
           </a>
@@ -204,12 +204,16 @@
                 </div>
               </div>
               
-              <!-- Status Badge -->
-              <div class="flex justify-center mb-2">
+              <!-- Status Badge and Actions -->
+              <div class="flex justify-between items-center mb-2">
                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
                       [class]="policy.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
                   {{ policy.isActive ? 'Active' : 'Inactive' }}
                 </span>
+                <button (click)="deletePolicy(policy._id, policy.title)" 
+                        class="text-red-600 hover:text-red-800 text-xs font-medium">
+                  Delete
+                </button>
               </div>
             </div>
           </div>

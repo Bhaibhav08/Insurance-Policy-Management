@@ -45,10 +45,30 @@ export class PolicyDetailComponent implements OnInit {
   loadPolicy(id: string): void {
     this.isLoading = true;
     
-    // Use sample data for now
+    // Try to fetch from API first
+    this.apiService.getPolicyById(id).subscribe({
+      next: (response) => {
+        console.log('Policy API response:', response);
+        if (response.success && response.data) {
+          this.policy = response.data;
+        } else {
+          this.policy = null;
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error fetching policy:', error);
+        // Fallback to sample data
+        this.loadSamplePolicy(id);
+      }
+    });
+  }
+
+  loadSamplePolicy(id: string): void {
+    // Use sample data as fallback
     const samplePolicies = [
       {
-        _id: '1',
+        _id: '68db70d602c5325d38c03d3a',
         code: 'LIFE001',
         title: 'Term Life Insurance',
         description: 'Comprehensive life coverage with flexible premium options and high sum assured.',
@@ -62,9 +82,9 @@ export class PolicyDetailComponent implements OnInit {
         imageUrl: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop'
       },
       {
-        _id: '2',
+        _id: '68db70d602c5325d38c03d3b',
         code: 'HEALTH001',
-        title: 'Family Health Insurance',
+        title: 'Health Insurance',
         description: 'Complete health coverage for your entire family with cashless treatment.',
         premium: 1800,
         termMonths: 12,

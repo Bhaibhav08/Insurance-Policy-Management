@@ -64,7 +64,7 @@ describe('PolicyDetailComponent', () => {
     authService.getCurrentUser.calls.reset();
     
     (activatedRoute.snapshot.paramMap.get as jasmine.Spy).and.returnValue('1');
-    apiService.getPolicyById.and.returnValue(of(mockPolicy));
+    apiService.getPolicyById.and.returnValue(of({ success: true, data: mockPolicy }));
     apiService.purchasePolicy.and.returnValue(of({ success: true }));
     apiService.recordPayment.and.returnValue(of({ success: true }));
     authService.getCurrentUser.and.returnValue({ _id: 'user1', name: 'Test User', email: 'test@example.com', role: 'customer', createdAt: new Date(), updatedAt: new Date() });
@@ -90,6 +90,7 @@ describe('PolicyDetailComponent', () => {
     expect(component.isLoading).toBe(false);
 
     // Test policy not found (loadPolicy with non-existent ID)
+    apiService.getPolicyById.and.returnValue(of({ success: false, data: null }));
     component.loadPolicy('999');
     expect(component.policy).toBeNull();
     expect(component.isLoading).toBe(false);
